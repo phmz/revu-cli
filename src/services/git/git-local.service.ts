@@ -19,7 +19,7 @@ export class GitLocalService {
       );
     }
 
-    const diff = await this.git.diff();
+    const diff = await this.git.diff(['HEAD']);
     return { diff };
   }
 }
