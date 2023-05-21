@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 
 import { ConfigCommand } from './commands/config.command';
+import { LocalReviewCommand } from './commands/local-review.command';
 
 const program = new Command();
 
@@ -28,8 +29,11 @@ program
 program
   .command('local')
   .description('review the local changes')
-  .action(() => {
-    console.log('Reviewing local changes');
+  .action(async () => {
+    const localReviewCommand = new LocalReviewCommand({
+      commandName: 'local-review',
+    });
+    await localReviewCommand.run();
   });
 
 program.parse(process.argv);
