@@ -1,5 +1,7 @@
 import { Command } from 'commander';
 
+import { ConfigCommand } from './commands/config-command';
+
 const program = new Command();
 
 program
@@ -9,8 +11,9 @@ program
 program
   .command('config')
   .description('setup raven-cli')
-  .action(() => {
-    console.log('Setup config');
+  .action(async () => {
+    const configCommand = new ConfigCommand({ commandName: 'config' });
+    await configCommand.run();
   });
 
 program

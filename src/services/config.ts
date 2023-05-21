@@ -2,28 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
+import { Config, GithubConfig, OpenAIConfig } from '../interfaces';
+
 const CONFIG_FILENAME = 'rvn.json';
-
-interface GithubConfig {
-  githubApiUrl: string;
-  secretGithubToken: string;
-}
-
-interface OpenAIConfig {
-  openaiApiUrl: string;
-  openaiModel: string;
-  openaiTemperature: number;
-  secretOpenaiApiKey: string;
-}
-
-interface LLMConfig {
-  openai: OpenAIConfig;
-}
-
-interface Config {
-  github: GithubConfig;
-  llm: LLMConfig;
-}
 
 class ConfigurationError extends Error {
   constructor(message: string) {
