@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import { ConfigCommand } from './commands/config.command';
 import { LocalReviewCommand } from './commands/local-review.command';
 import { PullRequestReviewCommand } from './commands/pull-request-review.command';
+import { LocalReviewArgs } from './interfaces';
 
 const program = new Command();
 
@@ -33,12 +34,18 @@ program
 
 program
   .command('local')
-  .description('review the local changes')
-  .action(async () => {
+  .description('review the local changes and file')
+  .option('-f, --filename <filename>', 'filename to search and review', '')
+  .option(
+    '-d, --directory <directory>',
+    'directory of the file to search and review',
+    '.',
+  )
+  .action(async (localReviewArgs: LocalReviewArgs) => {
     const localReviewCommand = new LocalReviewCommand({
       commandName: 'local-review',
     });
-    await localReviewCommand.run();
+    await localReviewCommand.run(localReviewArgs);
   });
 
 program.parse(process.argv);

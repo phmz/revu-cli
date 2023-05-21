@@ -30,3 +30,8 @@ export interface LocalDiff {
 export interface PullRequestDiff {
   diff: string;
 }
+
+export interface LocalReviewArgs {
+  directory: string;
+  filename: string;
+}
