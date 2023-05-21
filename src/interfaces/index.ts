@@ -30,3 +30,7 @@ export interface RunArgs<T> {
 export interface LocalDiff {
   diff: string;
 }
+
+export interface PullRequestDiff {
+  diff: string;
+}
