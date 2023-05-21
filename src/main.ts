@@ -2,6 +2,7 @@ import { Command } from 'commander';
 
 import { ConfigCommand } from './commands/config.command';
 import { LocalReviewCommand } from './commands/local-review.command';
+import { PullRequestReviewCommand } from './commands/pull-request-review.command';
 
 const program = new Command();
 
@@ -20,10 +21,14 @@ program
 program
   .command('pr <repository> <pull_request>')
   .description('review the specified pull request of the repository')
-  .action((repository: string, pull_request: string) => {
-    console.log(
-      `Reviewing pull request ${pull_request} of repository ${repository}`,
-    );
+  .action(async (repository: string, pullRequest: string) => {
+    const pullRequestReviewCommand = new PullRequestReviewCommand({
+      commandName: 'pr-review',
+    });
+    await pullRequestReviewCommand.run({
+      fullRepository: repository,
+      pullRequest,
+    });
   });
 
 program

@@ -23,10 +23,6 @@ export interface CommandConfig {
   commandName: string;
 }
 
-export interface RunArgs<T> {
-  args: T;
-}
-
 export interface LocalDiff {
   diff: string;
 }

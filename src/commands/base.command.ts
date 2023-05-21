@@ -1,4 +1,4 @@
-import { CommandConfig, RunArgs } from '../interfaces';
+import { CommandConfig } from '../interfaces';
 
 export abstract class BaseCommand<T> {
   protected config: CommandConfig;
@@ -7,6 +7,5 @@ export abstract class BaseCommand<T> {
     this.config = config;
   }
 
-  public abstract run(args: RunArgs<T>): Promise<void>;
-  public abstract run(): Promise<void>;
+  public abstract run(args?: T): Promise<void>;
 }
