@@ -1,9 +1,9 @@
 import prompts from 'prompts';
 
 import { CommandConfig } from '../interfaces';
-import ConfigService from '../services/config';
+import ConfigService from '../services/config.service';
 
-import { BaseCommand } from './base-command';
+import { BaseCommand } from './base.command';
 
 export class ConfigCommand extends BaseCommand<void> {
   constructor(config: CommandConfig) {

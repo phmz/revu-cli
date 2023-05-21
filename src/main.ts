@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 
-import { ConfigCommand } from './commands/config-command';
+import { ConfigCommand } from './commands/config.command';
 
 const program = new Command();
 
