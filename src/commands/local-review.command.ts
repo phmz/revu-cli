@@ -18,6 +18,6 @@ export class LocalReviewCommand extends BaseCommand<void> {
 
     const review = await OpenAiService.reviewCode(openAIConfig, localDiff);
 
-    console.log(review);
+    process.stdout.write(review + '\n');
   }
 }

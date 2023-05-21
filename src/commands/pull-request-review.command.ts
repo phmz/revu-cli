@@ -33,6 +33,6 @@ export class PullRequestReviewCommand extends BaseCommand<PullRequestReviewArgs>
       pullRequestDiff,
     );
 
-    console.log(review);
+    process.stdout.write(review + '\n');
   }
 }
