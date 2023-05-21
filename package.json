@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/main.js",
   "scripts": {
-    "start": "node dist/main.js",
+    "start": "NODE_ENV=development node dist/main.js",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "build": "tsc",
     "build:dev": "tsc --watch"
