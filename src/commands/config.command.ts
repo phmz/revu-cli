@@ -11,30 +11,37 @@ export class ConfigCommand extends BaseCommand<void> {
   }
 
   public async run(): Promise<void> {
-    const response = await prompts([
+    const response = await prompts(
+      [
+        {
+          type: 'password',
+          name: 'githubToken',
+          message: 'Please enter your GitHub token:',
+          validate: (input: string) => {
+            if (input.length === 0) {
+              return 'GitHub token cannot be empty!';
+            }
+            return true;
+          },
+        },
+        {
+          type: 'password',
+          name: 'openApiKey',
+          message: 'Please enter your OpenAI API key:',
+          validate: (input: string) => {
+            if (input.length === 0) {
+              return 'OpenAI API key cannot be empty!';
+            }
+            return true;
+          },
+        },
+      ],
       {
-        type: 'password',
-        name: 'githubToken',
-        message: 'Please enter your GitHub token:',
-        validate: (input: string) => {
-          if (input.length === 0) {
-            return 'GitHub token cannot be empty!';
-          }
-          return true;
+        onCancel: () => {
+          throw new Error('Setup was cancelled by the user');
         },
       },
-      {
-        type: 'password',
-        name: 'openApiKey',
-        message: 'Please enter your OpenAI API key:',
-        validate: (input: string) => {
-          if (input.length === 0) {
-            return 'OpenAI API key cannot be empty!';
-          }
-          return true;
-        },
-      },
-    ]);
+    );
 
     const config = ConfigService.newConfig({
       githubToken: response.githubToken,
