@@ -13,7 +13,7 @@ class ConfigurationError extends Error {
   }
 }
 
-class ConfigService {
+export class ConfigService {
   private static getConfigPath(): string {
     const configDir =
       process.env.NODE_ENV === 'development'
@@ -89,5 +89,3 @@ class ConfigService {
     fs.writeFileSync(configPath, content);
   }
 }
-
-export default ConfigService;
