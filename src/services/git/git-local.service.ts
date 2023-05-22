@@ -22,4 +22,44 @@ export class GitLocalService {
     const diff = await this.git.diff(['HEAD']);
     return { diff };
   }
+
+  public static async getFilesChanged(): Promise<string[]> {
+    if (!(await this.git.checkIsRepo())) {
+      throw new GitLocalServiceError(
+        'Current directory is not inside a Git repository.',
+      );
+    }
+
+    const diff = await this.git.diff(['HEAD', '--name-only']);
+    return diff.split('\n').filter(Boolean);
+  }
+
+  public static async getFilesDiff(filenames: string[]): Promise<LocalDiff> {
+    if (!(await this.git.checkIsRepo())) {
+      throw new GitLocalServiceError(
+        'Current directory is not inside a Git repository.',
+      );
+    }
+
+    const diff = await this.git.diff(['HEAD'].concat(filenames));
+    return { diff };
+  }
+
+  public static async getCommitHistory(): Promise<string[]> {
+    if (!(await this.git.checkIsRepo())) {
+      throw new GitLocalServiceError(
+        'Current directory is not inside a Git repository.',
+      );
+    }
+
+    const history = await this.git.log(['-n', '10', '--pretty=format:%s']);
+    return history.all
+      .map((commit) => {
+        return commit.hash;
+      })
+      .map((commits) => {
+        return commits.split('\n');
+      })
+      .flat();
+  }
 }

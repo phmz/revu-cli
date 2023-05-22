@@ -63,4 +63,24 @@ export class FileService {
 
     return { filename: file, content };
   }
+
+  static async selectFiles(filenames: string[]): Promise<string[]> {
+    const response = await prompts({
+      type: 'multiselect',
+      name: 'files',
+      message: 'Select files to commit:',
+      choices: filenames
+        .sort()
+        .map((filename) => ({ title: filename, value: filename })),
+      initial: 0,
+      min: 1,
+      max: filenames.length,
+    });
+
+    if (!response.files) {
+      throw new FileServiceError('No files were selected from the prompt');
+    }
+
+    return response.files;
+  }
 }

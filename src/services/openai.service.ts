@@ -64,4 +64,58 @@ export class OpenAiService {
 
     return assistantMessage;
   }
+
+  public static async generateCommitMessage(
+    config: OpenAIConfig,
+    details: LocalDiff,
+    commitHistory: string[],
+  ): Promise<string> {
+    const openAIConfiguration = new Configuration({
+      apiKey: config.secretOpenaiApiKey,
+    });
+    const openaiClient = new OpenAIApi(openAIConfiguration);
+
+    const context = `You are a highly experienced assistant that reviews code.\
+    \nYour task is to find the perfect commit description using the diff and the commit history if provided.\
+    ${
+      commitHistory.length > 0
+        ? `\n\nThe commit history is:\n\n${commitHistory.join('\n')}`
+        : ''
+    }`;
+    const instructions = `IMPORTANT INSTRUCTIONS (Mandatory):
+    - The response should only contain the commit description.`;
+    const systemContent = `${context}\n${instructions}`;
+
+    const chatCompletionCreate: CreateChatCompletionRequest = {
+      model: config.openaiModel,
+      temperature: config.openaiTemperature,
+      messages: [
+        {
+          role: 'system',
+          content: systemContent,
+        },
+        {
+          role: 'user',
+          content: `Please provide the perfect commit description:\n\n${details.diff}`,
+        },
+      ],
+    };
+
+    let result;
+    try {
+      result = await openaiClient.createChatCompletion(chatCompletionCreate);
+    } catch (error: any) {
+      throw new OpenAiServiceError(
+        `Failed to generate the commit message: ${error.message}`,
+      );
+    }
+
+    const assistantMessage = result.data?.choices?.[0]?.message?.content;
+
+    if (!assistantMessage) {
+      throw new OpenAiServiceError('OpenAI did not return a response');
+    }
+
+    return assistantMessage;
+  }
 }

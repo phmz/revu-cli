@@ -4,6 +4,7 @@ import { ConfigCommand } from './commands/config.command';
 import { LocalReviewCommand } from './commands/local-review.command';
 import { PullRequestReviewCommand } from './commands/pull-request-review.command';
 import { LocalReviewArgs } from './interfaces';
+import { CommitCommand } from './commands/commit.command';
 
 const program = new Command();
 
@@ -46,6 +47,16 @@ program
       commandName: 'local-review',
     });
     await localReviewCommand.run(localReviewArgs);
+  });
+
+program
+  .command('commit')
+  .description('select files to commit and generate a commit message')
+  .action(async () => {
+    const commitCommand = new CommitCommand({
+      commandName: 'commit',
+    });
+    await commitCommand.run();
   });
 
 program.parse(process.argv);
