@@ -24,7 +24,8 @@ export class OpenAiService {
     const instructions = `IMPORTANT INSTRUCTIONS (Mandatory):
     - Always pinpoint exactly where in the code needs adjustment and precisely what needs to be changed.
     - Ensure that the review is as concise and specific as possible.
-    - Never recommend changes or comments that do not enhance or correct the code.
+    - Never recommend changes that do not enhance or fixe the code.
+    - Never recommend comments.
     - Never include comments that do not contribute to the code's improvement or error correction.
     - Always explicitly mention at the end the overall status, either "✔ LGTM", "✘ Change(s) required", or "~ LGTM with suggestions".`;
     const responseFormat = `\`\`\`\
