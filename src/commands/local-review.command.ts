@@ -13,6 +13,7 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
   }
 
   private async localDiff(): Promise<LocalDiff> {
+    logger.info('Reviewing local changes');
     return GitLocalService.getLocalDiff();
   }
 
@@ -20,7 +21,9 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
     directory: string,
     filename: string,
   ): Promise<LocalDiff> {
-    const content = await FileService.getFileContent(directory, filename);
+    const { content, filename: selectedFile } =
+      await FileService.getFileContentAndName(directory, filename);
+    logger.info(`Reviewing ${selectedFile}`);
     return { diff: content };
   }
 

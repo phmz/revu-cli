@@ -50,4 +50,11 @@ export class GithubService {
 
     return { diff };
   }
+
+  static getPullRequestUrl(
+    fullRepositoryPath: string,
+    pullRequest: string,
+  ): string {
+    return `https://github.com/${fullRepositoryPath}/pull/${pullRequest}`;
+  }
 }

@@ -4,6 +4,10 @@ import fg from 'fast-glob';
 import prompts from 'prompts';
 import escapeStringRegexp from 'escape-string-regexp';
 
+interface GetFileResponse {
+  content: string;
+  filename: string;
+}
 class FileServiceError extends Error {
   constructor(message: string) {
     super(message);
@@ -12,10 +16,10 @@ class FileServiceError extends Error {
 }
 
 export class FileService {
-  public static async getFileContent(
+  public static async getFileContentAndName(
     directory: string,
     filename: string,
-  ): Promise<string> {
+  ): Promise<GetFileResponse> {
     const escapedFilename = escapeStringRegexp(filename);
     const pattern = `${directory}/**/*${escapedFilename}*`;
     const matches = await fg(pattern, { onlyFiles: true });
@@ -34,7 +38,7 @@ export class FileService {
       const response = await prompts({
         type: 'autocomplete',
         name: 'file',
-        message: 'Multiple files match. Please select a file:',
+        message: 'Multiple files match. Please select a file to review:',
         choices: matches
           .sort()
           .map((match) => ({ title: match, value: match })),
@@ -55,6 +59,8 @@ export class FileService {
       file = response.file;
     }
 
-    return fs.readFileSync(file, 'utf8');
+    const content = fs.readFileSync(file, 'utf8');
+
+    return { filename: file, content };
   }
 }

@@ -23,6 +23,13 @@ export class PullRequestReviewCommand extends BaseCommand<PullRequestReviewArgs>
     const config = ConfigService.fromFile();
     const openAIConfig = config.llm.openai;
 
+    const pullRequestUrl = GithubService.getPullRequestUrl(
+      fullRepository,
+      pullRequest,
+    );
+
+    logger.info(`Reviewing ${pullRequestUrl}`);
+
     const pullRequestDiff = await GithubService.getPRDiff(
       config.github,
       fullRepository,
