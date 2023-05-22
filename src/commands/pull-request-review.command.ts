@@ -2,6 +2,7 @@ import { CommandConfig } from '../interfaces';
 import { ConfigService } from '../services/config.service';
 import { OpenAiService } from '../services/openai.service';
 import { GithubService } from '../services/git/github.service';
+import { logger } from '../logger';
 
 import { BaseCommand } from './base.command';
 
@@ -33,6 +34,6 @@ export class PullRequestReviewCommand extends BaseCommand<PullRequestReviewArgs>
       pullRequestDiff,
     );
 
-    process.stdout.write(review + '\n');
+    logger.info(review);
   }
 }
