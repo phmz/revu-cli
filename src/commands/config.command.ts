@@ -5,6 +5,13 @@ import { ConfigService } from '../services/config.service';
 
 import { BaseCommand } from './base.command';
 
+class ConfigCommandError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ConfigCommandError';
+  }
+}
+
 export class ConfigCommand extends BaseCommand<void> {
   constructor(config: CommandConfig) {
     super(config);
@@ -38,7 +45,7 @@ export class ConfigCommand extends BaseCommand<void> {
       ],
       {
         onCancel: () => {
-          throw new Error('Setup was cancelled by the user');
+          throw new ConfigCommandError('Setup was cancelled by the user');
         },
       },
     );
