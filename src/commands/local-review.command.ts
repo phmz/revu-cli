@@ -1,3 +1,5 @@
+import ora from 'ora';
+
 import { CommandConfig, LocalDiff, LocalReviewArgs } from '../interfaces';
 import { ConfigService } from '../services/config.service';
 import { OpenAiService } from '../services/openai.service';
@@ -35,7 +37,11 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
       ? await this.localFile(directory, filename)
       : await this.localDiff();
 
+    const spinner = ora({
+      text: 'Reviewing...',
+    }).start();
     const review = await OpenAiService.reviewCode(openAIConfig, localDiff);
+    spinner.stop();
 
     logger.info(review);
   }
