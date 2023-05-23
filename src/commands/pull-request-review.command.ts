@@ -1,3 +1,5 @@
+import ora from 'ora';
+
 import { CommandConfig } from '../interfaces';
 import { ConfigService } from '../services/config.service';
 import { OpenAiService } from '../services/openai.service';
@@ -36,10 +38,14 @@ export class PullRequestReviewCommand extends BaseCommand<PullRequestReviewArgs>
       pullRequest,
     );
 
+    const spinner = ora({
+      text: 'Reviewing...',
+    }).start();
     const review = await OpenAiService.reviewCode(
       openAIConfig,
       pullRequestDiff,
     );
+    spinner.stop();
 
     logger.info(review);
   }
