@@ -35,7 +35,7 @@ export class GithubService {
     const diffResponse = await fetch(apiPrUrl, {
       headers: {
         Authorization: `Bearer ${config.secretGithubToken}`,
-        'User-Agent': 'Raven-CLI',
+        'User-Agent': 'Revu-CLI',
         Accept: 'application/vnd.github.diff',
       },
     });

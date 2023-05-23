@@ -16,11 +16,11 @@ const program = new Command();
 
 program
   .version('0.0.1')
-  .description('raven-cli - a CLI tool to automate code reviews with GPT-4');
+  .description('revu-cli - a CLI tool to automate code reviews with GPT-4');
 
 program
   .command('config')
-  .description('setup raven-cli')
+  .description('setup revu-cli')
   .action(
     handleError(async () => {
       const configCommand = new ConfigCommand({ commandName: 'config' });

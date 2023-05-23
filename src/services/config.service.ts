@@ -4,7 +4,7 @@ import os from 'os';
 
 import { Config, GithubConfig, OpenAIConfig } from '../interfaces';
 
-const CONFIG_FILENAME = 'rvn.json';
+const CONFIG_FILENAME = 'revu.json';
 
 class ConfigurationError extends Error {
   constructor(message: string) {
@@ -18,7 +18,7 @@ export class ConfigService {
     const configDir =
       process.env.NODE_ENV === 'development'
         ? process.cwd()
-        : path.join(os.homedir(), '.rvn');
+        : path.join(os.homedir(), '.revu');
     return path.join(configDir, CONFIG_FILENAME);
   }
 
