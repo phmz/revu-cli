@@ -35,3 +35,8 @@ export interface LocalReviewArgs {
   directory: string;
   filename: string;
 }
+
+export interface Prompt {
+  system: string;
+  user: string;
+}
