@@ -13,6 +13,21 @@ revu is a comprehensive command-line tool designed to streamline the code review
 - You'll need to have [Node.js](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/get-npm) installed on your machine.
 - An OpenAI API key for using GPT-4 and a GitHub token for accessing the GitHub API.
 
+## Switching to GPT-4 Model
+
+revu is initially set to use the GPT-3.5-turbo model. If you wish to switch to GPT-4, you can do so by modifying your `revu.json` config file:
+
+1. Run the config command if you haven't done so already. This will generate the `revu.json` config file:
+```bash
+node dist/main.js config
+```
+2. Locate your `revu.json` config file (it's usually in the root directory of your project).
+3. Find the `llm` section and then the `openai` subsection within it.
+4. Change the value of `openaiModel` from `gpt-3.5-turbo` to `gpt-4`.
+5. Save and close your `revu.json` config file.
+
+Remember that using GPT-4 may result in increased API costs. Please refer to OpenAI's pricing for more information.
+
 ## Installation
 
 1. Clone the repository:
