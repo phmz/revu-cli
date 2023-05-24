@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "main": "dist/main.js",
+  "bin": {
+    "revu": "./dist/main.js"
+  },
   "scripts": {
     "start": "NODE_ENV=development node dist/main.js",
     "lint": "eslint \"src/**/*.ts\" --fix",
@@ -12,6 +15,9 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@types/node": "^20.2.1",
     "@types/node-fetch": "^2.6.4",
