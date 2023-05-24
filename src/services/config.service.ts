@@ -86,6 +86,12 @@ export class ConfigService {
   static writeToFile(config: Config): void {
     const configPath = ConfigService.getConfigPath();
     const content = JSON.stringify(config, null, 2);
+
+    const dir = path.dirname(configPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
     fs.writeFileSync(configPath, content);
   }
 }
