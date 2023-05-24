@@ -40,3 +40,8 @@ export interface Prompt {
   system: string;
   user: string;
 }
+
+export interface FileSelectionStatus {
+  selectedFileNames: string[];
+  unselectedFileNames: string[];
+}

@@ -1,6 +1,11 @@
 import prompts from 'prompts';
 
-import { CommandConfig, LocalDiff, LocalReviewArgs } from '../interfaces';
+import {
+  CommandConfig,
+  FileSelectionStatus,
+  LocalDiff,
+  LocalReviewArgs,
+} from '../interfaces';
 import { ConfigService } from '../services/config.service';
 import { GitLocalService } from '../services/git/git-local.service';
 import { FileService } from '../services/file.service';
@@ -19,9 +24,15 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
     return GitLocalService.getFilesDiff(filenames);
   }
 
-  private async selectChangedFiles(): Promise<string[]> {
+  private async selectChangedFiles(): Promise<FileSelectionStatus> {
     const filenames = await GitLocalService.getFilesChanged();
-    return FileService.selectFiles(filenames);
+    const selectedFiles = await FileService.selectFiles(filenames);
+    return {
+      selectedFileNames: selectedFiles,
+      unselectedFileNames: filenames.filter((filename) => {
+        return !selectedFiles.includes(filename);
+      }),
+    };
   }
 
   private async promptShouldCommit(): Promise<boolean> {
@@ -53,8 +64,9 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
       const config = ConfigService.fromFile();
       const openAIConfig = config.llm.openai;
 
-      const selectedFiles = await this.selectChangedFiles();
-      const diff = await this.filesDiff(selectedFiles);
+      const { selectedFileNames, unselectedFileNames } =
+        await this.selectChangedFiles();
+      const diff = await this.filesDiff(selectedFileNames);
 
       logger.info('Generating commit message');
 
@@ -72,8 +84,11 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
 
       const shouldCommit = await this.promptShouldCommit();
       if (shouldCommit) {
-        await GitLocalService.commit(commitMessage, selectedFiles);
-        shouldContinueCommit = await this.promptShouldContinueCommit();
+        await GitLocalService.commit(commitMessage, selectedFileNames);
+        shouldContinueCommit =
+          unselectedFileNames.length === 0
+            ? false
+            : await this.promptShouldContinueCommit();
       } else {
         shouldContinueCommit = false;
       }
