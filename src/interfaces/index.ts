@@ -10,11 +10,16 @@ export interface OpenAIConfig {
   secretOpenaiApiKey: string;
 }
 
+export interface GitConfig {
+  maxCommitHistory: number;
+}
+
 export interface LLMConfig {
   openai: OpenAIConfig;
 }
 
 export interface Config {
+  git: GitConfig;
   github: GithubConfig;
   llm: LLMConfig;
 }

@@ -62,6 +62,7 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
     let shouldContinueCommit = true;
     while (shouldContinueCommit) {
       const config = ConfigService.fromFile();
+      const gitConfig = config.git;
       const openAIConfig = config.llm.openai;
 
       const { selectedFileNames, unselectedFileNames } =
@@ -70,7 +71,9 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
 
       logger.info('Generating commit message');
 
-      const commitHistory = await GitLocalService.getCommitHistory();
+      const commitHistory = await GitLocalService.getCommitHistory(
+        gitConfig.maxCommitHistory,
+      );
 
       this.spinner.text = 'Generating commit message...';
       this.spinner.start();

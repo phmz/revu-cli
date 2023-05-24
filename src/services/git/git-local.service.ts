@@ -2,8 +2,6 @@ import { gitP } from 'simple-git';
 
 import { LocalDiff } from '../../interfaces';
 
-const MAX_COMMIT_HISTORY = 20;
-
 class GitLocalServiceError extends Error {
   constructor(message: string) {
     super(message);
@@ -35,12 +33,14 @@ export class GitLocalService {
     return { diff };
   }
 
-  public static async getCommitHistory(): Promise<string[]> {
+  public static async getCommitHistory(
+    maxCommitHistory: number,
+  ): Promise<string[]> {
     await this.checkIsRepo();
 
     const history = await this.git.log([
       '-n',
-      String(MAX_COMMIT_HISTORY),
+      String(maxCommitHistory),
       '--pretty=format:%s',
     ]);
     return history.all

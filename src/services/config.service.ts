@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
-import { Config, GithubConfig, OpenAIConfig } from '../interfaces';
+import { Config, GitConfig, GithubConfig, OpenAIConfig } from '../interfaces';
 
 const CONFIG_FILENAME = 'revu.json';
 
@@ -26,6 +26,12 @@ export class ConfigService {
     return {
       secretGithubToken: 'ght_<your_token_here>',
       githubApiUrl: 'https://api.github.com',
+    };
+  }
+
+  private static getDefaultGitConfig(): GitConfig {
+    return {
+      maxCommitHistory: 10,
     };
   }
 
@@ -58,6 +64,7 @@ export class ConfigService {
         ...ConfigService.getDefaultGithubConfig(),
         secretGithubToken: githubToken,
       },
+      git: ConfigService.getDefaultGitConfig(),
       llm: {
         openai: {
           ...ConfigService.getDefaultOpenAIConfig(),
