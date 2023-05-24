@@ -19,7 +19,7 @@ revu is initially set to use the GPT-3.5-turbo model. If you wish to switch to G
 
 1. Run the config command if you haven't done so already. This will generate the `revu.json` config file:
 ```bash
-node dist/main.js config
+revu config
 ```
 2. Locate your `revu.json` config file (it's usually in the root directory of your project).
 3. Find the `llm` section and then the `openai` subsection within it.
@@ -59,12 +59,17 @@ npm run build
 Before using revu, you need to set up the configuration with your OpenAI API key and GitHub token. You can do this with the following command:
 
 ```bash
-node dist/main.js config
+revu config
 ```
 
 This will prompt you to enter your OpenAI API key and GitHub token.
 
-After setting up the configuration, you can use revu in several ways:
+For a comprehensive list of all available commands and options in revu, run the help command:
+
+```bash
+revu help
+```
+This will display a list of all the available commands, their descriptions, and options you can use with revu.
 
 ## Local Code Review
 
@@ -75,7 +80,7 @@ revu can analyze local changes in two ways:
 If you want to analyze your local changes, navigate to the root directory of your local Git repository and run the following command:
 
 ```bash
-node dist/main.js local
+revu local
 ```
 
 revu will then analyze your local changes and provide you with a review.
@@ -85,17 +90,19 @@ revu will then analyze your local changes and provide you with a review.
 If you want to analyze a specific file in your local directory, navigate to the root directory of your local Git repository and run the following command:
 
 ```bash
-node dist/main.js local --directory <directory> --filename <filename>
+revu local --directory <directory> --filename <filename>
 ```
 
 Replace `<directory>` with the relative path of the directory to search and `<filename>` with the name of the file to review.
 
 ## Generate Commit Message
 
-revu can propose commit messages based on local diffs and commit history. To use this feature, run the following command:
+revu can propose commit messages based on local diffs and commit history. To use this
+
+feature, run the following command:
 
 ```bash
-node dist/main.js commit
+revu commit
 ```
 
 revu will prompt you to select the files you wish to commit. Once the files are selected, revu fetches the commit history and proposes a commit message. If you agree with the suggested commit message, you can proceed to commit your changes right away. If there are unselected files left, revu will ask you if you wish to continue the commit process.
@@ -105,13 +112,13 @@ revu will prompt you to select the files you wish to commit. Once the files are 
 If you want to analyze a pull request, run the following command:
 
 ```bash
-node dist/main.js pr <repository> <pull_request_number>
+revu pr <repository> <pull_request_number>
 ```
 
 Replace `<repository>` with the repository to review in the format `owner/repository`, and `<pull_request_number>` with the number of the pull request to review. For example:
 
 ```bash
-node dist/main.js pr phmz/revu 42
+revu pr phmz/revu 42
 ```
 
 revu will then fetch the pull request details, analyze the changes, and provide you with a review.
