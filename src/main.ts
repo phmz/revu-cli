@@ -11,11 +11,13 @@ const program = new Command();
 
 program
   .version('0.0.1')
-  .description('revu-cli - a CLI tool to automate code reviews with GPT-4');
+  .description(
+    'revu-cli - Streamlining code reviews and commit message generation using GPT-4.',
+  );
 
 program
   .command('config')
-  .description('setup revu-cli')
+  .description('Configure revu-cli')
   .action(async () => {
     const configCommand = new ConfigCommand({ commandName: 'config' });
     await configCommand.run();
@@ -23,7 +25,7 @@ program
 
 program
   .command('pr <repository> <pull_request>')
-  .description('review the specified pull request of the repository')
+  .description('Review a pull request')
   .action(async (repository: string, pullRequest: string) => {
     const pullRequestReviewCommand = new PullRequestReviewCommand({
       commandName: 'pr-review',
@@ -36,13 +38,9 @@ program
 
 program
   .command('local')
-  .description('review the local changes and file')
-  .option('-f, --filename <filename>', 'filename to search and review', '')
-  .option(
-    '-d, --directory <directory>',
-    'directory of the file to search and review',
-    '.',
-  )
+  .description('Review local changes or a specific file')
+  .option('-f, --filename <filename>', 'filename to review', '')
+  .option('-d, --directory <directory>', 'directory of the file to review', '.')
   .action(async (localReviewArgs: LocalReviewArgs) => {
     const localReviewCommand = new LocalReviewCommand({
       commandName: 'local-review',
@@ -52,7 +50,7 @@ program
 
 program
   .command('commit')
-  .description('select files to commit and generate a commit message')
+  .description('Generate commit message and commit selected files')
   .action(async () => {
     const commitCommand = new CommitCommand({
       commandName: 'commit',
