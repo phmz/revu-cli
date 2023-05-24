@@ -1,3 +1,5 @@
+import prompts from 'prompts';
+
 import { CommandConfig, LocalDiff, LocalReviewArgs } from '../interfaces';
 import { ConfigService } from '../services/config.service';
 import { GitLocalService } from '../services/git/git-local.service';
@@ -22,6 +24,18 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
     return FileService.selectFiles(filenames);
   }
 
+  private async promptShouldCommit(): Promise<boolean> {
+    const response = await prompts({
+      type: 'confirm',
+      name: 'value',
+      message:
+        'Do you want to commit the selected files with the generated commit message?',
+      initial: false,
+    });
+
+    return response.value;
+  }
+
   public async _run(): Promise<void> {
     const config = ConfigService.fromFile();
     const openAIConfig = config.llm.openai;
@@ -41,7 +55,11 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
       commitHistory,
     );
     this.spinner.stop();
-
     logger.info(commitMessage);
+
+    const shouldCommit = await this.promptShouldCommit();
+    if (shouldCommit) {
+      await GitLocalService.commit(commitMessage, selectedFiles);
+    }
   }
 }
