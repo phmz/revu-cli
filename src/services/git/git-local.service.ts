@@ -2,6 +2,8 @@ import { gitP } from 'simple-git';
 
 import { LocalDiff } from '../../interfaces';
 
+const MAX_COMMIT_HISTORY = 20;
+
 class GitLocalServiceError extends Error {
   constructor(message: string) {
     super(message);
@@ -52,7 +54,11 @@ export class GitLocalService {
       );
     }
 
-    const history = await this.git.log(['-n', '10', '--pretty=format:%s']);
+    const history = await this.git.log([
+      '-n',
+      String(MAX_COMMIT_HISTORY),
+      '--pretty=format:%s',
+    ]);
     return history.all
       .map((commit) => {
         return commit.hash;
