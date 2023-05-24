@@ -16,7 +16,8 @@
   "author": "",
   "license": "MIT",
   "files": [
-    "dist"
+    "dist",
+    "logo"
   ],
   "devDependencies": {
     "@types/node": "^20.2.1",
