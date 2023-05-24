@@ -21,7 +21,7 @@ revu is initially set to use the GPT-3.5-turbo model. If you wish to switch to G
 ```bash
 revu config
 ```
-2. Locate your `revu.json` config file (it's usually in the root directory of your project).
+2. Locate your `revu.json` config file. By default, it is saved in the `.revu` directory in your home directory (`~/.revu`).
 3. Find the `llm` section and then the `openai` subsection within it.
 4. Change the value of `openaiModel` from `gpt-3.5-turbo` to `gpt-4`.
 5. Save and close your `revu.json` config file.
