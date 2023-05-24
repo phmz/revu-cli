@@ -1,5 +1,3 @@
-import ora from 'ora';
-
 import { CommandConfig } from '../interfaces';
 import { ConfigService } from '../services/config.service';
 import { OpenAiService } from '../services/openai.service';
@@ -18,7 +16,7 @@ export class PullRequestReviewCommand extends BaseCommand<PullRequestReviewArgs>
     super(config);
   }
 
-  public async run({
+  public async _run({
     fullRepository,
     pullRequest,
   }: PullRequestReviewArgs): Promise<void> {
@@ -38,14 +36,13 @@ export class PullRequestReviewCommand extends BaseCommand<PullRequestReviewArgs>
       pullRequest,
     );
 
-    const spinner = ora({
-      text: 'Reviewing...',
-    }).start();
+    this.spinner.text = 'Reviewing...';
+    this.spinner.start();
     const review = await OpenAiService.reviewCode(
       openAIConfig,
       pullRequestDiff,
     );
-    spinner.stop();
+    this.spinner.stop();
 
     logger.info(review);
   }

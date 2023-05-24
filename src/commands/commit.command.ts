@@ -1,5 +1,3 @@
-import ora from 'ora';
-
 import { CommandConfig, LocalDiff, LocalReviewArgs } from '../interfaces';
 import { ConfigService } from '../services/config.service';
 import { GitLocalService } from '../services/git/git-local.service';
@@ -24,7 +22,7 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
     return FileService.selectFiles(filenames);
   }
 
-  public async run(): Promise<void> {
+  public async _run(): Promise<void> {
     const config = ConfigService.fromFile();
     const openAIConfig = config.llm.openai;
 
@@ -35,15 +33,14 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
 
     const commitHistory = await GitLocalService.getCommitHistory();
 
-    const spinner = ora({
-      text: 'Generating commit message...',
-    }).start();
+    this.spinner.text = 'Generating commit message...';
+    this.spinner.start();
     const commitMessage = await OpenAiService.generateCommitMessage(
       openAIConfig,
       diff,
       commitHistory,
     );
-    spinner.stop();
+    this.spinner.stop();
 
     logger.info(commitMessage);
   }
