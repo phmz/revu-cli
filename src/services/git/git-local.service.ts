@@ -15,44 +15,28 @@ export class GitLocalService {
   private static readonly git = gitP();
 
   public static async getLocalDiff(): Promise<LocalDiff> {
-    if (!(await this.git.checkIsRepo())) {
-      throw new GitLocalServiceError(
-        'Current directory is not inside a Git repository.',
-      );
-    }
+    await this.checkIsRepo();
 
     const diff = await this.git.diff(['HEAD']);
     return { diff };
   }
 
   public static async getFilesChanged(): Promise<string[]> {
-    if (!(await this.git.checkIsRepo())) {
-      throw new GitLocalServiceError(
-        'Current directory is not inside a Git repository.',
-      );
-    }
+    await this.checkIsRepo();
 
     const diff = await this.git.diff(['HEAD', '--name-only']);
     return diff.split('\n').filter(Boolean);
   }
 
   public static async getFilesDiff(filenames: string[]): Promise<LocalDiff> {
-    if (!(await this.git.checkIsRepo())) {
-      throw new GitLocalServiceError(
-        'Current directory is not inside a Git repository.',
-      );
-    }
+    await this.checkIsRepo();
 
     const diff = await this.git.diff(['HEAD'].concat(filenames));
     return { diff };
   }
 
   public static async getCommitHistory(): Promise<string[]> {
-    if (!(await this.git.checkIsRepo())) {
-      throw new GitLocalServiceError(
-        'Current directory is not inside a Git repository.',
-      );
-    }
+    await this.checkIsRepo();
 
     const history = await this.git.log([
       '-n',
@@ -67,5 +51,13 @@ export class GitLocalService {
         return commits.split('\n');
       })
       .flat();
+  }
+
+  private static async checkIsRepo() {
+    if (!(await this.git.checkIsRepo())) {
+      throw new GitLocalServiceError(
+        'Current directory is not inside a Git repository.',
+      );
+    }
   }
 }
