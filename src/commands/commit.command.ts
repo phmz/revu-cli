@@ -36,30 +36,47 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
     return response.value;
   }
 
+  private async promptShouldContinueCommit(): Promise<boolean> {
+    const response = await prompts({
+      type: 'confirm',
+      name: 'value',
+      message: 'Do you want to continue commit?',
+      initial: false,
+    });
+
+    return response.value;
+  }
+
   public async _run(): Promise<void> {
-    const config = ConfigService.fromFile();
-    const openAIConfig = config.llm.openai;
+    let shouldContinueCommit = true;
+    while (shouldContinueCommit) {
+      const config = ConfigService.fromFile();
+      const openAIConfig = config.llm.openai;
 
-    const selectedFiles = await this.selectChangedFiles();
-    const diff = await this.filesDiff(selectedFiles);
+      const selectedFiles = await this.selectChangedFiles();
+      const diff = await this.filesDiff(selectedFiles);
 
-    logger.info('Generating commit message');
+      logger.info('Generating commit message');
 
-    const commitHistory = await GitLocalService.getCommitHistory();
+      const commitHistory = await GitLocalService.getCommitHistory();
 
-    this.spinner.text = 'Generating commit message...';
-    this.spinner.start();
-    const commitMessage = await OpenAiService.generateCommitMessage(
-      openAIConfig,
-      diff,
-      commitHistory,
-    );
-    this.spinner.stop();
-    logger.info(commitMessage);
+      this.spinner.text = 'Generating commit message...';
+      this.spinner.start();
+      const commitMessage = await OpenAiService.generateCommitMessage(
+        openAIConfig,
+        diff,
+        commitHistory,
+      );
+      this.spinner.stop();
+      logger.info(commitMessage);
 
-    const shouldCommit = await this.promptShouldCommit();
-    if (shouldCommit) {
-      await GitLocalService.commit(commitMessage, selectedFiles);
+      const shouldCommit = await this.promptShouldCommit();
+      if (shouldCommit) {
+        await GitLocalService.commit(commitMessage, selectedFiles);
+        shouldContinueCommit = await this.promptShouldContinueCommit();
+      } else {
+        shouldContinueCommit = false;
+      }
     }
   }
 }
