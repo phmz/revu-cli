@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo/revu.webp" alt="Logo" width="25%">
+    <img src="https://raw.githubusercontent.com/phmz/revu-cli/main/logo/revu.webp" alt="Logo" width="25%">
 </p>
 
 revu is a comprehensive command-line tool designed to streamline the code review process. Leveraging the advanced capabilities of GPT-4 and the GitHub API, it can analyze and provide insightful reviews on pull requests, local changes, and individual files. Additionally, revu offers an intuitive commit message generator that uses local diffs and commit history to propose appropriate commit messages. Its flexible nature aims to cover various aspects of code review, offering an efficient toolset for developers.
