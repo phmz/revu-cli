@@ -53,6 +53,16 @@ export class GitLocalService {
       .flat();
   }
 
+  public static async commit(
+    message: string,
+    filenames: string[],
+  ): Promise<void> {
+    await this.checkIsRepo();
+
+    await this.git.add(filenames);
+    await this.git.commit(message);
+  }
+
   private static async checkIsRepo() {
     if (!(await this.git.checkIsRepo())) {
       throw new GitLocalServiceError(
