@@ -30,6 +30,14 @@ Remember that using GPT-4 may result in increased API costs. Please refer to Ope
 
 ## Installation
 
+You can install revu globally using npm by running the following command:
+
+```bash
+npm i -g revu-cli
+```
+
+Alternatively, you can clone the repository and install the dependencies locally:
+
 1. Clone the repository:
 
 ```bash
@@ -69,6 +77,7 @@ For a comprehensive list of all available commands and options in revu, run the 
 ```bash
 revu help
 ```
+
 This will display a list of all the available commands, their descriptions, and options you can use with revu.
 
 ## Local Code Review
@@ -97,9 +106,7 @@ Replace `<directory>` with the relative path of the directory to search and `<fi
 
 ## Generate Commit Message
 
-revu can propose commit messages based on local diffs and commit history. To use this
-
-feature, run the following command:
+revu can propose commit messages based on local diffs and commit history. To use this feature, run the following command:
 
 ```bash
 revu commit
