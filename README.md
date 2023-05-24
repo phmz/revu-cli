@@ -98,7 +98,7 @@ revu can propose commit messages based on local diffs and commit history. To use
 node dist/main.js commit
 ```
 
-revu will prompt you to select the files you wish to commit. It will then fetch the commit history and propose a commit message.
+revu will prompt you to select the files you wish to commit. Once the files are selected, revu fetches the commit history and proposes a commit message. If you agree with the suggested commit message, you can proceed to commit your changes right away. If there are unselected files left, revu will ask you if you wish to continue the commit process.
 
 ## Pull Request Review
 
