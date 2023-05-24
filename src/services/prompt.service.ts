@@ -34,7 +34,8 @@ export class PromptService {
         : ''
     }`;
     const instructions = `IMPORTANT INSTRUCTIONS (Mandatory):
-    - The response should only contain the commit description.`;
+    - The response should only contain the commit description.
+    - The commit message should have a length between 50 and 72 characters.`;
     const systemContent = `${context}\n${instructions}`;
 
     return {
