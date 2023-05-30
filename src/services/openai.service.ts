@@ -1,4 +1,9 @@
-import { Configuration, CreateChatCompletionRequest, OpenAIApi } from 'openai';
+import {
+  ChatCompletionRequestMessage,
+  Configuration,
+  CreateChatCompletionRequest,
+  OpenAIApi,
+} from 'openai';
 
 import { LocalDiff, OpenAIConfig } from '../interfaces';
 
@@ -12,37 +17,28 @@ export class OpenAiServiceError extends Error {
 }
 
 export class OpenAiService {
-  public static async reviewCode(
+  public static async callOpenAI(
     config: OpenAIConfig,
-    details: LocalDiff,
+    messages: ChatCompletionRequestMessage[],
   ): Promise<string> {
     const openAIConfiguration = new Configuration({
       apiKey: config.secretOpenaiApiKey,
     });
     const openaiClient = new OpenAIApi(openAIConfiguration);
 
-    const prompt = PromptService.generateCodeReviewPrompt(details);
-
     const chatCompletionCreate: CreateChatCompletionRequest = {
       model: config.openaiModel,
       temperature: config.openaiTemperature,
-      messages: [
-        {
-          role: 'system',
-          content: prompt.system,
-        },
-        {
-          role: 'user',
-          content: prompt.user,
-        },
-      ],
+      messages: messages,
     };
 
     let result;
     try {
       result = await openaiClient.createChatCompletion(chatCompletionCreate);
     } catch (error: any) {
-      throw new OpenAiServiceError(`Failed to review code: ${error.message}`);
+      throw new OpenAiServiceError(
+        `Failed to call OpenAI API: ${error.message}`,
+      );
     }
 
     const assistantMessage = result.data?.choices?.[0]?.message?.content;
@@ -54,51 +50,45 @@ export class OpenAiService {
     return assistantMessage;
   }
 
+  public static async reviewCode(
+    config: OpenAIConfig,
+    details: LocalDiff,
+  ): Promise<string> {
+    const prompt = PromptService.generateCodeReviewPrompt(details);
+    const messages: ChatCompletionRequestMessage[] = [
+      {
+        role: 'system',
+        content: prompt.system,
+      },
+      {
+        role: 'user',
+        content: prompt.user,
+      },
+    ];
+
+    return await this.callOpenAI(config, messages);
+  }
+
   public static async generateCommitMessage(
     config: OpenAIConfig,
     details: LocalDiff,
     commitHistory: string[],
   ): Promise<string> {
-    const openAIConfiguration = new Configuration({
-      apiKey: config.secretOpenaiApiKey,
-    });
-    const openaiClient = new OpenAIApi(openAIConfiguration);
-
     const prompt = PromptService.generateCommitMessagePrompt(
       details,
       commitHistory,
     );
+    const messages: ChatCompletionRequestMessage[] = [
+      {
+        role: 'system',
+        content: prompt.system,
+      },
+      {
+        role: 'user',
+        content: prompt.user,
+      },
+    ];
 
-    const chatCompletionCreate: CreateChatCompletionRequest = {
-      model: config.openaiModel,
-      temperature: config.openaiTemperature,
-      messages: [
-        {
-          role: 'system',
-          content: prompt.system,
-        },
-        {
-          role: 'user',
-          content: prompt.user,
-        },
-      ],
-    };
-
-    let result;
-    try {
-      result = await openaiClient.createChatCompletion(chatCompletionCreate);
-    } catch (error: any) {
-      throw new OpenAiServiceError(
-        `Failed to generate the commit message: ${error.message}`,
-      );
-    }
-
-    const assistantMessage = result.data?.choices?.[0]?.message?.content;
-
-    if (!assistantMessage) {
-      throw new OpenAiServiceError('OpenAI did not return a response');
-    }
-
-    return assistantMessage;
+    return await this.callOpenAI(config, messages);
   }
 }
