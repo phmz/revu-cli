@@ -1,6 +1,10 @@
 import fetch from 'node-fetch';
 
-import { GithubConfig, PullRequestDiff } from '../../interfaces';
+import {
+  GithubConfig,
+  GitHubRepository,
+  PullRequestDiff,
+} from '../../interfaces';
 
 class GithubServiceError extends Error {
   constructor(message: string) {
@@ -10,10 +14,7 @@ class GithubServiceError extends Error {
 }
 
 export class GithubService {
-  private static getOwnerAndRepo(fullRepositoryPath: string): {
-    owner: string;
-    repo: string;
-  } {
+  private static getOwnerAndRepo(fullRepositoryPath: string): GitHubRepository {
     const ownerRepoRegex = /^[a-zA-Z0-9-_]+\/[a-zA-Z0-9-_]+$/;
     if (!ownerRepoRegex.test(fullRepositoryPath)) {
       throw new GithubServiceError(
