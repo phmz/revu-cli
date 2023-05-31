@@ -6,6 +6,7 @@ import { LocalReviewCommand } from './commands/local-review.command';
 import { PullRequestReviewCommand } from './commands/pull-request-review.command';
 import { LocalReviewArgs } from './interfaces';
 import { CommitCommand } from './commands/commit.command';
+import { checkForUpdate } from './utils/update-notifier';
 
 const program = new Command();
 
@@ -58,7 +59,9 @@ program
     await commitCommand.run();
   });
 
-program.parse(process.argv);
+program.parseAsync(process.argv).then(() => {
+  checkForUpdate();
+});
 
 if (!process.argv.slice(2).length) {
   program.outputHelp();
