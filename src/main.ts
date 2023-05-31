@@ -10,7 +10,7 @@ import { CommitCommand } from './commands/commit.command';
 const program = new Command();
 
 program
-  .version('0.0.1')
+  .version(process.env.npm_package_version || '0.0.0')
   .description(
     'revu-cli - Streamlining code reviews and commit message generation using GPT-4.',
   );
