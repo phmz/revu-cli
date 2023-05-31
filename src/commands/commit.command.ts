@@ -25,13 +25,21 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
   }
 
   private async selectChangedFiles(): Promise<FileSelectionStatus> {
-    const filenames = await GitLocalService.getFilesChanged();
-    const selectedFiles = await FileService.selectFiles(filenames);
+    const fileChanges = await GitLocalService.getFilesChanged();
+    const selectedFiles = await FileService.selectFiles(fileChanges);
+
+    const selectedFileNames = new Set(
+      selectedFiles.map((file) => file.filename),
+    );
+    const allFileNames = fileChanges.map((fileChange) => fileChange.filename);
+
+    const unselectedFileNames = allFileNames.filter(
+      (filename) => !selectedFileNames.has(filename),
+    );
+
     return {
-      selectedFileNames: selectedFiles,
-      unselectedFileNames: filenames.filter((filename) => {
-        return !selectedFiles.includes(filename);
-      }),
+      selectedFileNames: Array.from(selectedFileNames),
+      unselectedFileNames: unselectedFileNames,
     };
   }
 

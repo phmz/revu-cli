@@ -3,6 +3,9 @@ import fs from 'fs';
 import fg from 'fast-glob';
 import prompts from 'prompts';
 import escapeStringRegexp from 'escape-string-regexp';
+import chalk from 'chalk';
+
+import { GitFileChange } from '../interfaces';
 
 interface GetFileResponse {
   content: string;
@@ -64,17 +67,22 @@ export class FileService {
     return { filename: file, content };
   }
 
-  static async selectFiles(filenames: string[]): Promise<string[]> {
+  public static async selectFiles(
+    fileChanges: GitFileChange[],
+  ): Promise<GitFileChange[]> {
     const response = await prompts({
       type: 'multiselect',
       name: 'files',
       message: 'Select files to commit:',
-      choices: filenames
-        .sort()
-        .map((filename) => ({ title: filename, value: filename })),
+      choices: fileChanges
+        .sort((a, b) => a.filename.localeCompare(b.filename))
+        .map((fileChange) => ({
+          title: this.colorize(fileChange),
+          value: fileChange,
+        })),
       initial: 0,
       min: 1,
-      max: filenames.length,
+      max: fileChanges.length,
     });
 
     if (!response.files) {
@@ -82,5 +90,16 @@ export class FileService {
     }
 
     return response.files;
+  }
+
+  private static colorize(fileChange: GitFileChange): string {
+    switch (fileChange.status) {
+      case 'added':
+        return chalk.green(fileChange.filename);
+      case 'deleted':
+        return chalk.red(fileChange.filename);
+      case 'changed':
+        return chalk.cyan(fileChange.filename);
+    }
   }
 }

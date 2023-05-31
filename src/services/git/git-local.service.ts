@@ -1,6 +1,6 @@
 import { gitP } from 'simple-git';
 
-import { LocalDiff } from '../../interfaces';
+import { GitFileChange, LocalDiff } from '../../interfaces';
 
 class GitLocalServiceError extends Error {
   constructor(message: string) {
@@ -19,17 +19,36 @@ export class GitLocalService {
     return { diff };
   }
 
-  public static async getFilesChanged(): Promise<string[]> {
+  public static async getFilesChanged(): Promise<GitFileChange[]> {
     await this.checkIsRepo();
 
-    const diff = await this.git.diff(['HEAD', '--name-only']);
-    return diff.split('\n').filter(Boolean);
+    const status = await this.git.status();
+
+    const added: GitFileChange[] = [...status.created, ...status.not_added].map(
+      (filename) => ({ filename, status: 'added' }),
+    );
+
+    const deleted: GitFileChange[] = status.deleted.map((filename) => ({
+      filename,
+      status: 'deleted',
+    }));
+
+    const changed: GitFileChange[] = [
+      ...status.modified,
+      ...status.renamed.map((renamed) => renamed.to),
+      ...status.conflicted,
+    ].map((filename) => ({ filename, status: 'changed' }));
+
+    return [...added, ...deleted, ...changed].sort((a, b) => {
+      return a.filename.localeCompare(b.filename);
+    });
   }
 
   public static async getFilesDiff(filenames: string[]): Promise<LocalDiff> {
     await this.checkIsRepo();
 
-    const diff = await this.git.diff(['HEAD'].concat(filenames));
+    const diff = await this.git.diff(['HEAD', '--'].concat(filenames));
+
     return { diff };
   }
 

@@ -34,3 +34,8 @@ export interface FileSelectionStatus {
   selectedFileNames: string[];
   unselectedFileNames: string[];
 }
+
+export interface GitFileChange {
+  filename: string;
+  status: 'deleted' | 'changed' | 'added';
+}
