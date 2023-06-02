@@ -27,7 +27,10 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
     return { diff: content };
   }
 
-  public async _run({ directory, filename }: LocalReviewArgs): Promise<void> {
+  protected async _run({
+    directory,
+    filename,
+  }: LocalReviewArgs): Promise<void> {
     const config = ConfigService.fromFile();
     const openAIConfig = config.llm.openai;
 

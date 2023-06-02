@@ -16,7 +16,7 @@ export class PullRequestReviewCommand extends BaseCommand<PullRequestReviewArgs>
     super(config);
   }
 
-  public async _run({
+  protected async _run({
     fullRepository,
     pullRequest,
   }: PullRequestReviewArgs): Promise<void> {

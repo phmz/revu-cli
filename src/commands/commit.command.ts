@@ -66,7 +66,7 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
     return response.value;
   }
 
-  public async _run(): Promise<void> {
+  protected async _run(): Promise<void> {
     let shouldContinueCommit = true;
     while (shouldContinueCommit) {
       const config = ConfigService.fromFile();

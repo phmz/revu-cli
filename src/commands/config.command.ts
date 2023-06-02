@@ -17,7 +17,7 @@ export class ConfigCommand extends BaseCommand<void> {
     super(config);
   }
 
-  public async _run(): Promise<void> {
+  protected async _run(): Promise<void> {
     const response = await prompts(
       [
         {
