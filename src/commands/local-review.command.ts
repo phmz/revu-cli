@@ -16,6 +16,7 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
     const localDiff = await GitLocalService.getLocalDiff();
     logger.info('Reviewing local changes');
 
+    this.spinner.start();
     return OpenAiService.reviewDiff(openAIConfig, localDiff);
   }
 
@@ -34,6 +35,7 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
 
     logger.info(`Reviewing ${getFileResponse.filename}`);
 
+    this.spinner.start();
     return OpenAiService.reviewFile(
       openAIConfig,
       contentWithLineNumbers,
@@ -49,7 +51,6 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
     const openAIConfig = config.llm.openai;
 
     this.spinner.text = 'Reviewing...';
-    this.spinner.start();
     const review = filename
       ? await this.reviewFile(openAIConfig, directory, filename)
       : await this.reviewDiff(openAIConfig);
