@@ -1,7 +1,7 @@
 import { GitDiff, Prompt } from '../interfaces';
 
 export class PromptService {
-  public static generateCodeReviewPrompt(details: GitDiff): Prompt {
+  public static generateReviewDiffPrompt(details: GitDiff): Prompt {
     const context = `You are a highly experienced assistant that reviews code.\
     \nYour task is to ensure the code follows the best practices efficient, maintainable, and secure.`;
     const instructions = `IMPORTANT INSTRUCTIONS (Mandatory):

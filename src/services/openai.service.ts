@@ -50,11 +50,11 @@ export class OpenAiService {
     return assistantMessage;
   }
 
-  public static async reviewCode(
+  public static async reviewDiff(
     config: OpenAIConfig,
     details: GitDiff,
   ): Promise<string> {
-    const prompt = PromptService.generateCodeReviewPrompt(details);
+    const prompt = PromptService.generateReviewDiffPrompt(details);
     const messages: ChatCompletionRequestMessage[] = [
       {
         role: 'system',

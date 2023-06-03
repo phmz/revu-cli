@@ -38,7 +38,7 @@ export class PullRequestReviewCommand extends BaseCommand<PullRequestReviewArgs>
 
     this.spinner.text = 'Reviewing...';
     this.spinner.start();
-    const review = await OpenAiService.reviewCode(
+    const review = await OpenAiService.reviewDiff(
       openAIConfig,
       pullRequestDiff,
     );

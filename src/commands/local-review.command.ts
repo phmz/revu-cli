@@ -40,7 +40,7 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
 
     this.spinner.text = 'Reviewing...';
     this.spinner.start();
-    const review = await OpenAiService.reviewCode(openAIConfig, localDiff);
+    const review = await OpenAiService.reviewDiff(openAIConfig, localDiff);
     this.spinner.stop();
 
     logger.info(review);
