@@ -69,6 +69,29 @@ export class OpenAiService {
     return await this.callOpenAI(config, messages);
   }
 
+  public static async reviewFile(
+    config: OpenAIConfig,
+    fileContent: string,
+    filename: string,
+  ): Promise<string> {
+    const prompt = PromptService.generateReviewFilePrompt(
+      fileContent,
+      filename,
+    );
+    const messages: ChatCompletionRequestMessage[] = [
+      {
+        role: 'user',
+        content: prompt.system,
+      },
+      {
+        role: 'user',
+        content: prompt.user,
+      },
+    ];
+
+    return await this.callOpenAI(config, messages);
+  }
+
   public static async generateCommitMessage(
     config: OpenAIConfig,
     details: GitDiff,

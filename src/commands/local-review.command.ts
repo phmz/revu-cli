@@ -1,4 +1,4 @@
-import { CommandConfig, GitDiff, LocalReviewArgs } from '../interfaces';
+import { CommandConfig, LocalReviewArgs, OpenAIConfig } from '../interfaces';
 import { ConfigService } from '../services/config.service';
 import { OpenAiService } from '../services/openai.service';
 import { GitLocalService } from '../services/git/git-local.service';
@@ -12,19 +12,33 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
     super(config);
   }
 
-  private async localDiff(): Promise<GitDiff> {
+  private async reviewDiff(openAIConfig: OpenAIConfig): Promise<string> {
+    const localDiff = await GitLocalService.getLocalDiff();
     logger.info('Reviewing local changes');
-    return GitLocalService.getLocalDiff();
+
+    return OpenAiService.reviewDiff(openAIConfig, localDiff);
   }
 
-  private async localFile(
+  private async reviewFile(
+    openAIConfig: OpenAIConfig,
     directory: string,
     filename: string,
-  ): Promise<GitDiff> {
-    const { content, filename: selectedFile } =
-      await FileService.getFileContentAndName(directory, filename);
-    logger.info(`Reviewing ${selectedFile}`);
-    return { diff: content };
+  ): Promise<string> {
+    const getFileResponse = await FileService.getFileContentAndName(
+      directory,
+      filename,
+    );
+    const contentWithLineNumbers = FileService.addLineNumbers(
+      getFileResponse.content,
+    );
+
+    logger.info(`Reviewing ${getFileResponse.filename}`);
+
+    return OpenAiService.reviewFile(
+      openAIConfig,
+      contentWithLineNumbers,
+      getFileResponse.filename,
+    );
   }
 
   protected async _run({
@@ -34,13 +48,11 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
     const config = ConfigService.fromFile();
     const openAIConfig = config.llm.openai;
 
-    const localDiff = filename
-      ? await this.localFile(directory, filename)
-      : await this.localDiff();
-
     this.spinner.text = 'Reviewing...';
     this.spinner.start();
-    const review = await OpenAiService.reviewDiff(openAIConfig, localDiff);
+    const review = filename
+      ? await this.reviewFile(openAIConfig, directory, filename)
+      : await this.reviewDiff(openAIConfig);
     this.spinner.stop();
 
     logger.info(review);

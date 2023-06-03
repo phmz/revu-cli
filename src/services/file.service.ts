@@ -5,12 +5,8 @@ import prompts from 'prompts';
 import escapeStringRegexp from 'escape-string-regexp';
 import chalk from 'chalk';
 
-import { GitFileChange } from '../interfaces';
+import { GetFileResponse, GitFileChange } from '../interfaces';
 
-interface GetFileResponse {
-  content: string;
-  filename: string;
-}
 class FileServiceError extends Error {
   constructor(message: string) {
     super(message);
@@ -90,6 +86,13 @@ export class FileService {
     }
 
     return response.files;
+  }
+
+  public static addLineNumbers(content: string): string {
+    return content
+      .split('\n')
+      .map((line, index) => `${index + 1} | ${line}`)
+      .join('\n');
   }
 
   private static colorize(fileChange: GitFileChange): string {
