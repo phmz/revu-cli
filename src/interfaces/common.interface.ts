@@ -12,11 +12,7 @@ export interface CommandConfig {
   commandName: string;
 }
 
-export interface LocalDiff {
-  diff: string;
-}
-
-export interface PullRequestDiff {
+export interface GitDiff {
   diff: string;
 }
 

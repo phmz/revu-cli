@@ -1,7 +1,7 @@
-import { LocalDiff, Prompt } from '../interfaces';
+import { GitDiff, Prompt } from '../interfaces';
 
 export class PromptService {
-  public static generateCodeReviewPrompt(details: LocalDiff): Prompt {
+  public static generateCodeReviewPrompt(details: GitDiff): Prompt {
     const context = `You are a highly experienced assistant that reviews code.\
     \nYour task is to ensure the code follows the best practices efficient, maintainable, and secure.`;
     const instructions = `IMPORTANT INSTRUCTIONS (Mandatory):
@@ -21,7 +21,7 @@ export class PromptService {
   }
 
   public static generateCommitMessagePrompt(
-    details: LocalDiff,
+    details: GitDiff,
     commitHistory: string[],
   ): Prompt {
     const context = `You are a highly experienced assistant that reviews code.\

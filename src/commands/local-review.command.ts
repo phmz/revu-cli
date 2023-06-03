@@ -1,4 +1,4 @@
-import { CommandConfig, LocalDiff, LocalReviewArgs } from '../interfaces';
+import { CommandConfig, GitDiff, LocalReviewArgs } from '../interfaces';
 import { ConfigService } from '../services/config.service';
 import { OpenAiService } from '../services/openai.service';
 import { GitLocalService } from '../services/git/git-local.service';
@@ -12,7 +12,7 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
     super(config);
   }
 
-  private async localDiff(): Promise<LocalDiff> {
+  private async localDiff(): Promise<GitDiff> {
     logger.info('Reviewing local changes');
     return GitLocalService.getLocalDiff();
   }
@@ -20,7 +20,7 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
   private async localFile(
     directory: string,
     filename: string,
-  ): Promise<LocalDiff> {
+  ): Promise<GitDiff> {
     const { content, filename: selectedFile } =
       await FileService.getFileContentAndName(directory, filename);
     logger.info(`Reviewing ${selectedFile}`);

@@ -1,10 +1,6 @@
 import fetch from 'node-fetch';
 
-import {
-  GithubConfig,
-  GitHubRepository,
-  PullRequestDiff,
-} from '../../interfaces';
+import { GithubConfig, GitHubRepository, GitDiff } from '../../interfaces';
 
 class GithubServiceError extends Error {
   constructor(message: string) {
@@ -29,7 +25,7 @@ export class GithubService {
     config: GithubConfig,
     fullRepositoryPath: string,
     prNumber: string,
-  ): Promise<PullRequestDiff> {
+  ): Promise<GitDiff> {
     const { owner, repo } = this.getOwnerAndRepo(fullRepositoryPath);
     const apiPrUrl = `${config.githubApiUrl}/repos/${owner}/${repo}/pulls/${prNumber}`;
 

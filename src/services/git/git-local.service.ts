@@ -1,6 +1,6 @@
 import { gitP } from 'simple-git';
 
-import { GitFileChange, LocalDiff } from '../../interfaces';
+import { GitFileChange, GitDiff } from '../../interfaces';
 
 class GitLocalServiceError extends Error {
   constructor(message: string) {
@@ -12,7 +12,7 @@ class GitLocalServiceError extends Error {
 export class GitLocalService {
   private static readonly git = gitP();
 
-  public static async getLocalDiff(): Promise<LocalDiff> {
+  public static async getLocalDiff(): Promise<GitDiff> {
     await this.checkIsRepo();
 
     const diff = await this.git.diff(['HEAD']);
@@ -44,7 +44,7 @@ export class GitLocalService {
     });
   }
 
-  public static async getFilesDiff(filenames: string[]): Promise<LocalDiff> {
+  public static async getFilesDiff(filenames: string[]): Promise<GitDiff> {
     await this.checkIsRepo();
 
     const diff = await this.git.diff(['HEAD', '--'].concat(filenames));

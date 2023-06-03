@@ -5,7 +5,7 @@ import {
   OpenAIApi,
 } from 'openai';
 
-import { LocalDiff, OpenAIConfig } from '../interfaces';
+import { GitDiff, OpenAIConfig } from '../interfaces';
 
 import { PromptService } from './prompt.service';
 
@@ -52,7 +52,7 @@ export class OpenAiService {
 
   public static async reviewCode(
     config: OpenAIConfig,
-    details: LocalDiff,
+    details: GitDiff,
   ): Promise<string> {
     const prompt = PromptService.generateCodeReviewPrompt(details);
     const messages: ChatCompletionRequestMessage[] = [
@@ -71,7 +71,7 @@ export class OpenAiService {
 
   public static async generateCommitMessage(
     config: OpenAIConfig,
-    details: LocalDiff,
+    details: GitDiff,
     commitHistory: string[],
   ): Promise<string> {
     const prompt = PromptService.generateCommitMessagePrompt(

@@ -3,7 +3,7 @@ import prompts from 'prompts';
 import {
   CommandConfig,
   FileSelectionStatus,
-  LocalDiff,
+  GitDiff,
   LocalReviewArgs,
 } from '../interfaces';
 import { ConfigService } from '../services/config.service';
@@ -19,7 +19,7 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
     super(config);
   }
 
-  private async filesDiff(filenames: string[]): Promise<LocalDiff> {
+  private async filesDiff(filenames: string[]): Promise<GitDiff> {
     logger.info('Reviewing local changes for commit');
     return GitLocalService.getFilesDiff(filenames);
   }
