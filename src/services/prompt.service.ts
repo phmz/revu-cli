@@ -2,17 +2,20 @@ import { GitDiff, Prompt } from '../interfaces';
 
 export class PromptService {
   public static generateReviewDiffPrompt(details: GitDiff): Prompt {
-    const context = `You are a highly experienced assistant that reviews code.\
-    \nYour task is to ensure the code follows the best practices efficient, maintainable, and secure.`;
-    const instructions = `IMPORTANT INSTRUCTIONS (Mandatory):
-    - Always pinpoint exactly where in the code needs adjustment and precisely what needs to be changed.
-    - Ensure that the review is as concise and specific as possible.
-    - Never recommend changes that do not enhance or fixe the code.
-    - Never recommend comments.
-    - Never include comments that do not contribute to the code's improvement or error correction.
-    - Always explicitly mention at the end the overall status, either "✔ LGTM", "✘ Change(s) required", or "~ LGTM with suggestions".`;
-    const responseFormat = `\`\`\`\n📌 {{filename}}\n💡 {{suggestion}}\n\`\`\``;
-    const systemContent = `${context}\n${instructions}\n${responseFormat}`;
+    const context =
+      'Your objective is to meticulously review a diff from a git repository and ' +
+      'meticulously identify any requisite alterations to guarantee that the code ' +
+      'is efficient, durable, and secure. Your assessment must be precise and detailed, ' +
+      'only proposing changes that will enhance or repair the code. It is imperative to ' +
+      'accurately pinpoint the exact location in the code that necessitates modification ' +
+      'and explicitly specify the necessary changes. Refrain from suggesting comments and ' +
+      'provide an overall status at the conclusion of your evaluation. If no changes are necessary, ' +
+      'state "✔ LGTM." at the end of your feedback. If modifications are required, state ' +
+      '"✘ Change(s) required." at the end of your feedback. If you have suggestions, state ' +
+      '"~ LGTM with suggestions." at the end of your feedback. When recommending modifications or ' +
+      'improvements, please adhere to the following format:';
+    const responseFormat = `📌 {{filename}}\n💡 {{suggestion}}`;
+    const systemContent = `${context}\n\n${responseFormat}`;
 
     return {
       system: systemContent,
@@ -24,20 +27,18 @@ export class PromptService {
     fileContent: string,
     filename: string,
   ): Prompt {
-    const context = `You are a highly experienced assistant that reviews code.\
-    \nYour task is to ensure the code follows the best practices efficient, maintainable, and secure.`;
-
-    const instructions = `IMPORTANT INSTRUCTIONS (Mandatory):
-    - Always pinpoint the line number where the code needs adjustment and precisely what needs to be changed.
-    - Ensure that the review is as concise and specific as possible.
-    - Never recommend changes that do not enhance or fix the code.
-    - Never recommend comments.
-    - Never include comments that do not contribute to the code's improvement or error correction.
-    - Always explicitly mention at the end the overall status, either "✔ LGTM", "✘ Change(s) required", or "~ LGTM with suggestions".`;
-
-    const responseFormat = `For example, your response could be formatted like this:\n\n💡 Line {{line number}}: {{suggestion}}`;
-
-    const systemContent = `${context}\n${instructions}\n${responseFormat}`;
+    const context =
+      'As an expert code reviewer, your main duty is to ensure that the code conforms to ' +
+      'the highest standards of efficiency, maintainability, and security. To accomplish this, ' +
+      'you must provide clear and precise feedback that identifies the exact line number where ' +
+      'changes are necessary and specifies what needs to be altered. It is crucial to avoid suggesting ' +
+      'modifications that do not improve or fix the code and to refrain from making comments that do not ' +
+      "contribute to the code's improvement or error correction. At the conclusion of your review, you " +
+      'must explicitly state the overall status of the code, using one of the following three options: ' +
+      '"✔ LGTM" for code that is ready for use, "✘ Change(s) required" for code that requires improvements, ' +
+      'or "~ LGTM with suggestions" for code that is mostly acceptable but could benefit from some minor adjustments.';
+    const responseFormat = `Your feedback should be formatted in the following way:\n\n💡 Line {{line number}}: {{suggestion}}`;
+    const systemContent = `${context}\n\n${responseFormat}`;
 
     const fileExtension = filename.slice(filename.lastIndexOf('.') + 1);
 
@@ -51,19 +52,14 @@ export class PromptService {
     details: GitDiff,
     commitHistory: string[],
   ): Prompt {
-    const context = `You are a highly experienced assistant that reviews code.\
-    \nYour task is to find the perfect commit description using the diff and the commit history if provided.\
-    ${
-      commitHistory.length > 0
-        ? `\nThe commit history is:\n\`\`\`\n${commitHistory.join(
-            '\n',
-          )}\n\`\`\``
-        : ''
-    }`;
-    const instructions = `IMPORTANT INSTRUCTIONS (Mandatory):
-    - The response should only contain the commit description.
-    - The commit short description should have a maximum length of 40 characters.`;
-    const systemContent = `${context}\n${instructions}`;
+    const context =
+      'As an experienced code reviewer, your task is to identify the most appropriate commit ' +
+      'description by analyzing the diff and commit history. Your objective is ' +
+      'to produce a concise and precise commit description with a maximum length of 40 characters. ' +
+      'Please note that your response should only include the commit description. The commit history ' +
+      'provided is as follows:';
+    const commitHistoryContent = `\`\`\`\n${commitHistory.join('\n')}\n\`\`\``;
+    const systemContent = `${context}\n${commitHistoryContent}`;
 
     return {
       system: systemContent,
