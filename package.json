@@ -1,6 +1,6 @@
 {
   "name": "revu-cli",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "revu is a comprehensive command-line tool designed to enhance your coding workflow. It utilizes the advanced capabilities of GPT-4 and the GitHub API to provide insightful code analysis.",
   "main": "dist/main.js",
   "bin": {
