@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { version } from '../package.json';
+
 import { ConfigCommand } from './commands/config.command';
 import { LocalReviewCommand } from './commands/local-review.command';
 import { PullRequestReviewCommand } from './commands/pull-request-review.command';
@@ -11,7 +15,7 @@ import { checkForUpdate } from './utils/update-notifier';
 const program = new Command();
 
 program
-  .version(process.env.npm_package_version || '0.0.0')
+  .version(version || '0.0.0')
   .description(
     'revu-cli - Streamlining code reviews and commit message generation using GPT-4.',
   );
@@ -60,7 +64,7 @@ program
   });
 
 program.parseAsync(process.argv).then(() => {
-  checkForUpdate();
+  checkForUpdate(version);
 });
 
 if (!process.argv.slice(2).length) {
