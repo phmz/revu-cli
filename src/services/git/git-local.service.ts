@@ -13,10 +13,10 @@ export class GitLocalService {
   private static readonly git = gitP();
 
   public static async getLocalDiff(): Promise<GitDiff> {
-    await this.checkIsRepo();
+    const fileChanges = await this.getFilesChanged();
+    const filenames = fileChanges.map((fileChange) => fileChange.filename);
 
-    const diff = await this.git.diff(['HEAD']);
-    return { diff };
+    return this.getFilesDiff(filenames);
   }
 
   public static async getFilesChanged(): Promise<GitFileChange[]> {
