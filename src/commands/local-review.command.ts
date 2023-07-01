@@ -47,7 +47,7 @@ export class LocalReviewCommand extends BaseCommand<LocalReviewArgs> {
     directory,
     filename,
   }: LocalReviewArgs): Promise<void> {
-    const config = ConfigService.fromFile();
+    const config = ConfigService.load();
     const openAIConfig = config.llm.openai;
 
     this.spinner.text = 'Reviewing...';

@@ -50,10 +50,9 @@ export class ConfigCommand extends BaseCommand<void> {
       },
     );
 
-    const config = ConfigService.newConfig({
+    await ConfigService.save({
       githubToken: response.githubToken,
       openaiApiKey: response.openApiKey,
     });
-    await ConfigService.writeToFile(config);
   }
 }

@@ -2,9 +2,27 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
-import { Config, GitConfig, GithubConfig, OpenAIConfig } from '../interfaces';
+import merge from 'lodash.merge';
+
+import { Config } from '../interfaces';
 
 const CONFIG_FILENAME = 'revu.json';
+
+const DEFAULT_CONFIG: Config = {
+  git: { maxCommitHistory: 10 },
+  github: {
+    githubApiUrl: 'https://api.github.com',
+    secretGithubToken: '',
+  },
+  llm: {
+    openai: {
+      openaiApiUrl: 'https://api.openai.com',
+      openaiModel: 'gpt-3.5-turbo',
+      openaiTemperature: 0,
+      secretOpenaiApiKey: '',
+    },
+  },
+};
 
 class ConfigurationError extends Error {
   constructor(message: string) {
@@ -22,26 +40,47 @@ export class ConfigService {
     return path.join(configDir, CONFIG_FILENAME);
   }
 
-  private static getDefaultGithubConfig(): GithubConfig {
-    return {
-      secretGithubToken: 'ght_<your_token_here>',
-      githubApiUrl: 'https://api.github.com',
-    };
+  private static fromEnvOrDefault(): Config {
+    const envConfig = {
+      git: {
+        maxCommitHistory: process.env.GIT_MAX_COMMIT_HISTORY
+          ? Number(process.env.GIT_MAX_COMMIT_HISTORY)
+          : undefined,
+      },
+      github: {
+        githubApiUrl: process.env.GITHUB_API_URL,
+        secretGithubToken: process.env.GITHUB_TOKEN,
+      },
+      llm: {
+        openai: {
+          openaiApiUrl: process.env.OPENAI_API_URL,
+          openaiModel: process.env.OPENAI_MODEL,
+          openaiTemperature: process.env.OPENAI_TEMPERATURE
+            ? Number(process.env.OPENAI_TEMPERATURE)
+            : undefined,
+          secretOpenaiApiKey: process.env.OPENAI_API_KEY,
+        },
+      },
+    } as Config;
+
+    const cleanedEnvConfig = JSON.parse(JSON.stringify(envConfig));
+
+    return merge({}, DEFAULT_CONFIG, cleanedEnvConfig);
   }
 
-  private static getDefaultGitConfig(): GitConfig {
-    return {
-      maxCommitHistory: 10,
-    };
-  }
+  static fromFileOrDefault(): Config {
+    let fileConfig = {} as Config;
+    if (this.configFileExists()) {
+      try {
+        fileConfig = JSON.parse(fs.readFileSync(this.getConfigPath(), 'utf-8'));
+      } catch (err) {
+        throw new ConfigurationError(
+          'Unable to parse the configuration file. Please ensure it is valid JSON.',
+        );
+      }
+    }
 
-  private static getDefaultOpenAIConfig(): OpenAIConfig {
-    return {
-      secretOpenaiApiKey: 'sk-<your_key_here>',
-      openaiTemperature: 0,
-      openaiApiUrl: 'https://api.openai.com',
-      openaiModel: 'gpt-3.5-turbo',
-    };
+    return merge({}, DEFAULT_CONFIG, fileConfig);
   }
 
   private static validateTemperature(temperature: number): void {
@@ -52,53 +91,40 @@ export class ConfigService {
     }
   }
 
-  static newConfig({
+  private static configFileExists(): boolean {
+    const configPath = this.getConfigPath();
+    return fs.existsSync(configPath);
+  }
+
+  static save({
     githubToken,
     openaiApiKey,
   }: {
     githubToken: string;
     openaiApiKey: string;
-  }): Config {
-    return {
-      github: {
-        ...ConfigService.getDefaultGithubConfig(),
-        secretGithubToken: githubToken,
-      },
-      git: ConfigService.getDefaultGitConfig(),
-      llm: {
-        openai: {
-          ...ConfigService.getDefaultOpenAIConfig(),
-          secretOpenaiApiKey: openaiApiKey,
-        },
-      },
-    };
-  }
-
-  static fromFile(): Config {
-    const configPath = ConfigService.getConfigPath();
-    if (!fs.existsSync(configPath)) {
-      throw new ConfigurationError(
-        `Configuration file ${configPath} not found. Please run the config command.`,
-      );
-    }
-
-    const content = fs.readFileSync(configPath, 'utf-8');
-    const config: Config = JSON.parse(content);
-
-    ConfigService.validateTemperature(config.llm.openai.openaiTemperature);
-
-    return config;
-  }
-
-  static writeToFile(config: Config): void {
-    const configPath = ConfigService.getConfigPath();
-    const content = JSON.stringify(config, null, 2);
-
+  }): void {
+    const configPath = this.getConfigPath();
     const dir = path.dirname(configPath);
+
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
 
-    fs.writeFileSync(configPath, content);
+    const config = this.fromFileOrDefault();
+
+    config.github.secretGithubToken = githubToken;
+    config.llm.openai.secretOpenaiApiKey = openaiApiKey;
+
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  }
+
+  static load(): Config {
+    const config = this.configFileExists()
+      ? this.fromFileOrDefault()
+      : this.fromEnvOrDefault();
+
+    this.validateTemperature(config.llm.openai.openaiTemperature);
+
+    return config;
   }
 }

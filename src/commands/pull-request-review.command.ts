@@ -20,7 +20,7 @@ export class PullRequestReviewCommand extends BaseCommand<PullRequestReviewArgs>
     fullRepository,
     pullRequest,
   }: PullRequestReviewArgs): Promise<void> {
-    const config = ConfigService.fromFile();
+    const config = ConfigService.load();
     const openAIConfig = config.llm.openai;
 
     const pullRequestUrl = GithubService.getPullRequestUrl(

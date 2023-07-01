@@ -68,11 +68,11 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
 
   protected async _run(): Promise<void> {
     let shouldContinueCommit = true;
-    while (shouldContinueCommit) {
-      const config = ConfigService.fromFile();
-      const gitConfig = config.git;
-      const openAIConfig = config.llm.openai;
+    const config = ConfigService.load();
+    const gitConfig = config.git;
+    const openAIConfig = config.llm.openai;
 
+    while (shouldContinueCommit) {
       const { selectedFileNames, unselectedFileNames } =
         await this.selectChangedFiles();
       const diff = await this.filesDiff(selectedFileNames);
