@@ -87,6 +87,7 @@ revu can also be configured using environment variables. If an environment varia
 Here are the available environment variables:
 
 - `GIT_MAX_COMMIT_HISTORY`: Maximum number of commit history entries to fetch (default: 10).
+- `GIT_IGNORE_PATTERNS`: A comma-separated list of regular expression patterns of files to ignore (default: []).
 - `GITHUB_API_URL`: Custom URL for the GitHub API (default: https://api.github.com).
 - `GITHUB_TOKEN`: GitHub personal access token.
 - `OPENAI_API_URL`: Custom URL for the OpenAI API (default: https://api.openai.com).
@@ -143,6 +144,30 @@ revu pr phmz/revu 42
 ```
 
 revu will then fetch the pull request details, analyze the changes, and provide you with a review.
+
+# Ignoring Files
+
+The revu CLI tool allows you to ignore certain files during your review process by using regular expression patterns. You can define these patterns either through a configuration file or via an environment variable. The CLI tool will ignore files that match any of the provided patterns.
+
+## Via Configuration File
+
+You can define an array of `ignorePatterns` under the `git` section in your `revu.json` configuration file, like so:
+
+```json
+{
+  "git": {
+    "ignorePatterns": [".*lock.*", "another_pattern", "..."]
+  }
+}
+```
+
+## Via Environment Variable
+
+Alternatively, you can use the `GIT_IGNORE_PATTERNS` environment variable to define a comma-separated list of regular expression patterns:
+
+```bash
+export GIT_IGNORE_PATTERNS=.*lock.*,another_pattern,...
+```
 
 # Development
 
