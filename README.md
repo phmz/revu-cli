@@ -80,6 +80,20 @@ revu help
 
 This will display a list of all the available commands, their descriptions, and options you can use with revu.
 
+## Environment Variables
+
+revu can also be configured using environment variables. If an environment variable is not provided, revu will use the default value.
+
+Here are the available environment variables:
+
+- `GIT_MAX_COMMIT_HISTORY`: Maximum number of commit history entries to fetch (default: 10).
+- `GITHUB_API_URL`: Custom URL for the GitHub API (default: https://api.github.com).
+- `GITHUB_TOKEN`: GitHub personal access token.
+- `OPENAI_API_URL`: Custom URL for the OpenAI API (default: https://api.openai.com).
+- `OPENAI_API_KEY`: OpenAI API key for accessing the OpenAI API.
+- `OPENAI_MODEL`: OpenAI model to use (default: gpt-3.5-turbo).
+- `OPENAI_TEMPERATURE`: Temperature parameter for OpenAI model (default: 0).
+
 ## Local Code Review
 
 revu can analyze local changes in two ways:
