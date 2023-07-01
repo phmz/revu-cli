@@ -3,6 +3,7 @@ import prompts from 'prompts';
 import {
   CommandConfig,
   FileSelectionStatus,
+  GitConfig,
   GitDiff,
   LocalReviewArgs,
 } from '../interfaces';
@@ -19,9 +20,14 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
     super(config);
   }
 
-  private async filesDiff(filenames: string[]): Promise<GitDiff> {
+  private async filesDiff(
+    filenames: string[],
+    gitConfig: GitConfig,
+  ): Promise<GitDiff> {
     logger.info('Reviewing local changes for commit');
-    return GitLocalService.getFilesDiff(filenames);
+    return GitLocalService.getFilesDiff(filenames, {
+      ignorePatterns: gitConfig.ignorePatterns,
+    });
   }
 
   private async selectChangedFiles(): Promise<FileSelectionStatus> {
@@ -75,7 +81,7 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
     while (shouldContinueCommit) {
       const { selectedFileNames, unselectedFileNames } =
         await this.selectChangedFiles();
-      const diff = await this.filesDiff(selectedFileNames);
+      const diff = await this.filesDiff(selectedFileNames, gitConfig);
 
       logger.info('Generating commit message');
 

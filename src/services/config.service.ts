@@ -9,7 +9,10 @@ import { Config } from '../interfaces';
 const CONFIG_FILENAME = 'revu.json';
 
 const DEFAULT_CONFIG: Config = {
-  git: { maxCommitHistory: 10 },
+  git: {
+    ignorePatterns: [],
+    maxCommitHistory: 10,
+  },
   github: {
     githubApiUrl: 'https://api.github.com',
     secretGithubToken: '',
@@ -43,6 +46,7 @@ export class ConfigService {
   private static fromEnvOrDefault(): Config {
     const envConfig = {
       git: {
+        ignorePatterns: process.env.GIT_IGNORE_PATTERNS?.split(','),
         maxCommitHistory: process.env.GIT_MAX_COMMIT_HISTORY
           ? Number(process.env.GIT_MAX_COMMIT_HISTORY)
           : undefined,

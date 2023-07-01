@@ -12,11 +12,15 @@ class GitLocalServiceError extends Error {
 export class GitLocalService {
   private static readonly git = gitP();
 
-  public static async getLocalDiff(): Promise<GitDiff> {
+  public static async getLocalDiff(options?: {
+    ignorePatterns?: string[];
+  }): Promise<GitDiff> {
     const fileChanges = await this.getFilesChanged();
     const filenames = fileChanges.map((fileChange) => fileChange.filename);
 
-    return this.getFilesDiff(filenames);
+    return this.getFilesDiff(filenames, {
+      ignorePatterns: options?.ignorePatterns,
+    });
   }
 
   public static async getFilesChanged(): Promise<GitFileChange[]> {
@@ -44,10 +48,24 @@ export class GitLocalService {
     });
   }
 
-  public static async getFilesDiff(filenames: string[]): Promise<GitDiff> {
+  public static async getFilesDiff(
+    filenames: string[],
+    options?: { ignorePatterns?: string[] },
+  ): Promise<GitDiff> {
     await this.checkIsRepo();
 
-    const diff = await this.git.diff(['HEAD', '--'].concat(filenames));
+    const ignorePatterns =
+      options?.ignorePatterns?.map((pattern) => new RegExp(pattern)) || [];
+
+    const filteredFilenames = filenames.filter((filename) => {
+      return !ignorePatterns.some((pattern) => pattern.test(filename));
+    });
+
+    if (filteredFilenames.length === 0) {
+      throw new GitLocalServiceError('No files to diff');
+    }
+
+    const diff = await this.git.diff(['HEAD', '--'].concat(filteredFilenames));
 
     return { diff };
   }
