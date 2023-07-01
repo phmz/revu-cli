@@ -32,6 +32,7 @@ export class PullRequestReviewCommand extends BaseCommand<PullRequestReviewArgs>
 
     const pullRequestDiff = await GithubService.getPRDiff(
       config.github,
+      config.git,
       fullRepository,
       pullRequest,
     );
