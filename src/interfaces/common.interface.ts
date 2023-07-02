@@ -12,6 +12,12 @@ export interface CommandConfig {
   commandName: string;
 }
 
+export enum CommitAction {
+  COMMIT = 'commit',
+  REPLACE = 'replace',
+  SKIP = 'skip',
+}
+
 export interface GitDiff {
   diff: string;
 }

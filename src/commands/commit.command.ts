@@ -2,6 +2,7 @@ import prompts from 'prompts';
 
 import {
   CommandConfig,
+  CommitAction,
   FileSelectionStatus,
   GitConfig,
   GitDiff,
@@ -14,6 +15,13 @@ import { logger } from '../logger';
 import { OpenAiService } from '../services/openai.service';
 
 import { BaseCommand } from './base.command';
+
+class CommitCommandError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'CommitCommandError';
+  }
+}
 
 export class CommitCommand extends BaseCommand<LocalReviewArgs> {
   constructor(config: CommandConfig) {
@@ -49,18 +57,6 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
     };
   }
 
-  private async promptShouldCommit(): Promise<boolean> {
-    const response = await prompts({
-      type: 'confirm',
-      name: 'value',
-      message:
-        'Do you want to commit the selected files with the generated commit message?',
-      initial: false,
-    });
-
-    return response.value;
-  }
-
   private async promptShouldContinueCommit(): Promise<boolean> {
     const response = await prompts({
       type: 'confirm',
@@ -68,6 +64,43 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
       message: 'Do you want to continue commit?',
       initial: false,
     });
+
+    return response.value;
+  }
+
+  private async getCommitAction(): Promise<CommitAction> {
+    const response = await prompts({
+      type: 'select',
+      name: 'value',
+      message: 'Do you want to commit the message, replace it, or do nothing?',
+      choices: [
+        { title: 'Commit', value: CommitAction.COMMIT },
+        { title: 'Replace', value: CommitAction.REPLACE },
+        { title: 'Do Nothing', value: CommitAction.SKIP },
+      ],
+      initial: 0,
+    });
+
+    if (!response.value) {
+      throw new CommitCommandError('Commit action is required');
+    }
+
+    return response.value;
+  }
+
+  private async promptReplaceCommitMessage(
+    initialMessage: string,
+  ): Promise<string> {
+    const response = await prompts({
+      type: 'text',
+      name: 'value',
+      message: 'Enter the new commit message:',
+      initial: initialMessage,
+    });
+
+    if (!response.value) {
+      throw new CommitCommandError('Commit message is required');
+    }
 
     return response.value;
   }
@@ -99,15 +132,21 @@ export class CommitCommand extends BaseCommand<LocalReviewArgs> {
       this.spinner.stop();
       logger.info(commitMessage);
 
-      const shouldCommit = await this.promptShouldCommit();
-      if (shouldCommit) {
-        await GitLocalService.commit(commitMessage, selectedFileNames);
+      const commitAction = await this.getCommitAction();
+
+      shouldContinueCommit = commitAction !== CommitAction.SKIP;
+
+      if (commitAction !== CommitAction.SKIP) {
+        const messageToCommit =
+          commitAction === CommitAction.COMMIT
+            ? commitMessage
+            : await this.promptReplaceCommitMessage(commitMessage);
+        await GitLocalService.commit(messageToCommit, selectedFileNames);
+
         shouldContinueCommit =
           unselectedFileNames.length === 0
             ? false
             : await this.promptShouldContinueCommit();
-      } else {
-        shouldContinueCommit = false;
       }
     }
   }
