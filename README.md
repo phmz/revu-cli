@@ -169,6 +169,10 @@ Alternatively, you can use the `GIT_IGNORE_PATTERNS` environment variable to def
 export GIT_IGNORE_PATTERNS=.*lock.*,another_pattern,...
 ```
 
+# Pipeline Integration
+
+revu can be seamlessly integrated into your GitHub pipeline. This allows automatic code review for every commit in a pull request with the review results posted as a comment on the PR. Detailed instructions on how to set up this integration can be found in the [pipeline integration guide](./docs/pipeline_integration.md).
+
 # Development
 
 revu is built with TypeScript. Contributions are welcome!
